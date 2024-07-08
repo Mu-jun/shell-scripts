@@ -21,10 +21,6 @@ else
 fi
 echo "IDLE_PORT : ${IDLE_PORT}"
 
-echo "> application.jar 교체"
-mv ${APP_NAME}.jar ${APP_NAME}_bak.jar
-mv ${APP_NAME}_new.jar ${APP_NAME}.jar
-
 echo "> 현재 구동중인 애플리케이션 pid 확인"
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
@@ -33,7 +29,6 @@ echo "CURRENT_PID : $CURRENT_PID"
 
 echo "> 새 애플리케이션 배포"
 
-rm ${APP_NAME}-${IDLE_PORT}.log
 nohup java -jar "$APP_NAME.jar" --spring.profiles.active=prod --server.port=${IDLE_PORT} > ${APP_NAME}-${IDLE_PORT}.log 2>&1 &
 echo "> nohup java -jar "$APP_NAME.jar" --spring.profiles.active=prod --server.port=${IDLE_PORT} > ${APP_NAME}-${IDLE_PORT}.log 2>&1 &"
 
@@ -66,11 +61,8 @@ do
       kill -15 $IDLE_PID
     fi
     
-    echo "> application.jar 교체 복구"
-    mv ${APP_NAME}.jar ${APP_NAME}_new.jar
-    mv ${APP_NAME}_bak.jar ${APP_NAME}.jar
-    
-    exit 0
+    tail -n 1000 ${APP_NAME}-${IDLE_PORT}.log
+    exit 1
   fi
 
   echo "> Health check 연결 실패. 재시도..."
