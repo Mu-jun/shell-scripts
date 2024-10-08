@@ -58,3 +58,16 @@ public class CheckServerStateRestController {
     }
 }
 ```
+
+## MySQL_Backup_cron_shell.sh
+
+- MySQL 정기 백업 crontab 등록용 스크립트
+- mysql_config_editor 유틸리티로 유저 정보 등록 필요
+  - `mysql_config_editor set --login-path=[경로명] --host=localhost --user=[MySQL 사용자명] --password --port=3306`
+  - 사용방법
+    - `mysql --login-path=[경로명]`
+    - `mysqldump --login-path=[경로명] [데이터베이스] > [저장할 경로]`
+- `crontab -e`를 통해 스크립트를 자동 실행하는 것이 안전하다
+  - `0 */1 * * * sh /home/ubuntu/shells/MySQL_Backup_cron_shell.sh`
+  - `crontab -e`가 안된다면 패키지 매니저를 업데이트 후 다시 설치
+    - `sudo apt update -y && sudo apt install cron -y`
